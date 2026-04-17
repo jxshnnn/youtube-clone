@@ -63,9 +63,9 @@ const registerUser = asyncHandler(async (req, res) => {
     ? await uploadOnCloudinary(coverImageLocalPath)
     : null;
 
-  if (!avatar?.secure_url) {
-  throw new ApiError(400, "Avatar upload failed");
-}
+  if (!avatar?.url) {
+    throw new ApiError(400, "Avatar upload failed — check Cloudinary credentials in .env");
+  }
 
 console.log("CLOUDINARY RESPONSE:", avatar);
 

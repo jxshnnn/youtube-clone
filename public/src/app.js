@@ -4,10 +4,20 @@ import cookieParser from 'cookie-parser'
 
 const app = express()
 
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
+const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+    : ['http://localhost:5173']
 
+app.use(cors({
+    origin: function (origin, callback) {
+        // allow requests with no origin (mobile apps, postman, curl)
+        if (!origin) return callback(null, true)
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true)
+        }
+        return callback(new Error(`CORS blocked: ${origin} not allowed`))
+    },
+    credentials: true
 }))
 
 app.use(express.json({limit: "16kb"}))
